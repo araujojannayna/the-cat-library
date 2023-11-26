@@ -7,4 +7,4 @@ import jakarta.persistence.Id
 @Entity
 data class Book(@Id @GeneratedValue val id: Int?,
                 var title: String,
-                var pages: String)
+                var pagesQtde: Int)

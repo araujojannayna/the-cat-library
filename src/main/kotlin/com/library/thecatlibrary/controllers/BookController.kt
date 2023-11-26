@@ -2,9 +2,11 @@ package com.library.thecatlibrary.controllers
 
 import com.library.thecatlibrary.domain.Book
 import com.library.thecatlibrary.service.BookService
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
@@ -19,5 +21,15 @@ class BookController(var service: BookService) {
     @PostMapping
     fun create(@RequestBody book: Book): Book{
         return service.createBook(book)
+    }
+
+    @PutMapping
+    fun update(@RequestBody book: Book): Book{
+        return service.updateBook(book)
+    }
+
+    @DeleteMapping("/{id}")
+    fun remove(@PathVariable id: Int){
+        service.removeBook(id)
     }
 }
