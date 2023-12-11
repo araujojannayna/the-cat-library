@@ -1,4 +1,4 @@
-package com.library.thecatlibrary.domain
+package com.library.thecatlibrary.controller.request
 
 data class CreateBook(var title: String,
                       var author: MutableList<String>,

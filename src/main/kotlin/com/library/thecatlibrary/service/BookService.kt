@@ -1,16 +1,16 @@
 package com.library.thecatlibrary.service
 
-import com.library.thecatlibrary.domain.Book
-import com.library.thecatlibrary.domain.UpdateBook
-import com.library.thecatlibrary.domain.UpdateBookStars
-import com.library.thecatlibrary.domain.CreateBook
+import com.library.thecatlibrary.repository.entity.BookEntity
+import com.library.thecatlibrary.controller.request.UpdateBook
+import com.library.thecatlibrary.controller.request.UpdateBookStars
+import com.library.thecatlibrary.controller.request.CreateBook
 import com.library.thecatlibrary.repository.BookRepository
 import org.springframework.stereotype.Service
 
 @Service
 class BookService(var repository: BookRepository) {
 
-    fun findBook(id: Int): Book{
+    fun findBook(id: Int): BookEntity {
         return try {
             repository.findById(id).get()
         } catch (ex: NoSuchElementException){
@@ -18,18 +18,18 @@ class BookService(var repository: BookRepository) {
         }
     }
 
-    fun createBook(book: CreateBook): Book{
-        val entityBook = Book(title = book.title,
+    fun createBook(book: CreateBook): BookEntity {
+        val entityBookEntity = BookEntity(title = book.title,
             author = book.author,
             pagesQtde = book.pagesQtde,
             availableToChange = book.availableToChange,
             availableToSell = book.availableToSell,
             stars = book.stars,
             id = null)
-        return repository.save(entityBook)
+        return repository.save(entityBookEntity)
     }
 
-    fun updateBook(id: Int, book: UpdateBook): Book{
+    fun updateBook(id: Int, book: UpdateBook): BookEntity {
         return try{
             val actualBook = repository.findById(id).get()
             actualBook.title = book.title ?: actualBook.title
@@ -48,7 +48,7 @@ class BookService(var repository: BookRepository) {
         repository.deleteById(id)
     }
 
-    fun updateBook(bookId: Int, updateBookStars: UpdateBookStars): Book{
+    fun updateBook(bookId: Int, updateBookStars: UpdateBookStars): BookEntity {
         return try{
             val actualBook = repository.findById(bookId).get()
             actualBook.stars = updateBookStars.stars
@@ -58,6 +58,14 @@ class BookService(var repository: BookRepository) {
         }
     }
 
-    private fun generateErrorBook(): Book =
-        Book(id = null, title = "", pagesQtde = 0, availableToChange = false, availableToSell = false, stars = 0, author = mutableListOf())
+    private fun generateErrorBook(): BookEntity =
+        BookEntity(id = null, title = "", pagesQtde = 0, availableToChange = false, availableToSell = false, stars = 0, author = mutableListOf())
+
+    fun findBookByFilter(title: String?, author: String?, availableToChange: Boolean?, availableToSell: Boolean?): List<BookEntity> {
+        title?.let { return repository.findByTitle(title) }
+        author?.let { return repository.findByAuthor(author) }
+        availableToChange?.let { return repository.findByAvailableToChange(availableToChange) }
+        availableToSell?.let { return repository.findByAvailableToSell(availableToSell) }
+        return listOf(generateErrorBook())
+    }
 }
