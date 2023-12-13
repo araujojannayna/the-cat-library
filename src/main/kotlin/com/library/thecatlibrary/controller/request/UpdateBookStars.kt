@@ -1,3 +1,9 @@
 package com.library.thecatlibrary.controller.request
 
-data class UpdateBookStars(var stars: Int)
+import com.library.thecatlibrary.domain.Book
+
+data class UpdateBookStars(var stars: Int){
+    fun toBook(): Book {
+        return Book(stars = this.stars)
+    }
+}

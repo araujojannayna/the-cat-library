@@ -1,35 +1,32 @@
 package com.library.thecatlibrary.service
 
 import com.library.thecatlibrary.repository.entity.BookEntity
-import com.library.thecatlibrary.controller.request.UpdateBook
-import com.library.thecatlibrary.controller.request.UpdateBookStars
-import com.library.thecatlibrary.controller.request.CreateBook
+import com.library.thecatlibrary.domain.Book
 import com.library.thecatlibrary.repository.BookRepository
 import org.springframework.stereotype.Service
 
 @Service
 class BookService(val repository: BookRepository) {
 
-    fun findBook(id: Int): BookEntity {
+    fun findBook(id: Int): Book {
         return try {
-            repository.findById(id).get()
+            repository.findById(id).get().toBook()
         } catch (ex: NoSuchElementException){
             generateErrorBook()
         }
     }
 
-    fun createBook(book: CreateBook): BookEntity {
-        val entityBookEntity = BookEntity(title = book.title,
-            author = book.author,
-            pagesQtde = book.pagesQtde,
-            availableToChange = book.availableToChange,
-            availableToSell = book.availableToSell,
-            stars = book.stars,
-            id = null)
-        return repository.save(entityBookEntity)
+    fun createBook(book: Book): Book {
+        val entityBookEntity = BookEntity(title = book.title!!,
+            author = book.author!!,
+            pagesQtde = book.pagesQtde!!,
+            availableToChange = book.availableToChange!!,
+            availableToSell = book.availableToSell!!,
+            stars = book.stars!!)
+        return repository.save(entityBookEntity).toBook()
     }
 
-    fun updateBook(id: Int, book: UpdateBook): BookEntity {
+    fun updateBook(id: Int, book: Book): Book {
         return try{
             val actualBook = repository.findById(id).get()
             actualBook.title = book.title ?: actualBook.title
@@ -38,7 +35,7 @@ class BookService(val repository: BookRepository) {
             actualBook.stars = book.stars ?: actualBook.stars
             actualBook.availableToChange = book.availableToChange ?: actualBook.availableToChange
             actualBook.availableToSell = book.availableToSell ?: actualBook.availableToSell
-            repository.save(actualBook)
+            repository.save(actualBook).toBook()
         } catch (ex: NoSuchElementException){
             generateErrorBook()
         }
@@ -48,24 +45,14 @@ class BookService(val repository: BookRepository) {
         repository.deleteById(id)
     }
 
-    fun updateBook(bookId: Int, updateBookStars: UpdateBookStars): BookEntity {
-        return try{
-            val actualBook = repository.findById(bookId).get()
-            actualBook.stars = updateBookStars.stars
-            repository.save(actualBook)
-        } catch (ex: NoSuchElementException){
-            generateErrorBook()
-        }
-    }
+    private fun generateErrorBook(): Book =
+        Book(title = "", pagesQtde = 0, availableToChange = false, availableToSell = false, stars = 0, author = mutableListOf())
 
-    private fun generateErrorBook(): BookEntity =
-        BookEntity(id = null, title = "", pagesQtde = 0, availableToChange = false, availableToSell = false, stars = 0, author = mutableListOf())
-
-    fun findBookByFilter(title: String?, author: String?, availableToChange: Boolean?, availableToSell: Boolean?): List<BookEntity> {
-        title?.let { return repository.findByTitle(title) }
-        author?.let { return repository.findByAuthor(author) }
-        availableToChange?.let { return repository.findByAvailableToChange(availableToChange) }
-        availableToSell?.let { return repository.findByAvailableToSell(availableToSell) }
+    fun findBookByFilter(title: String?, author: String?, availableToChange: Boolean?, availableToSell: Boolean?): List<Book> {
+        title?.let { return repository.findByTitle(title).map { it.toBook() } }
+        author?.let { return repository.findByAuthor(author).map { it.toBook() } }
+        availableToChange?.let { return repository.findByAvailableToChange(availableToChange).map { it.toBook() } }
+        availableToSell?.let { return repository.findByAvailableToSell(availableToSell).map { it.toBook() } }
         return listOf(generateErrorBook())
     }
 }
