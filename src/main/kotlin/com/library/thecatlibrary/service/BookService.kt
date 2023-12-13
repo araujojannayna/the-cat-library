@@ -2,6 +2,7 @@ package com.library.thecatlibrary.service
 
 import com.library.thecatlibrary.repository.entity.BookEntity
 import com.library.thecatlibrary.domain.Book
+import com.library.thecatlibrary.extension.toBook
 import com.library.thecatlibrary.repository.BookRepository
 import org.springframework.stereotype.Service
 

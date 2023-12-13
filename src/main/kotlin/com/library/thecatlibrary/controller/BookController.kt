@@ -4,6 +4,7 @@ import com.library.thecatlibrary.controller.request.UpdateBook
 import com.library.thecatlibrary.controller.request.UpdateBookStars
 import com.library.thecatlibrary.controller.request.CreateBook
 import com.library.thecatlibrary.domain.Book
+import com.library.thecatlibrary.extension.toBook
 import com.library.thecatlibrary.service.BookService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
