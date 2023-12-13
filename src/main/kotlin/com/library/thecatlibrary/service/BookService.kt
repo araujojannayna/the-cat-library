@@ -8,7 +8,7 @@ import com.library.thecatlibrary.repository.BookRepository
 import org.springframework.stereotype.Service
 
 @Service
-class BookService(var repository: BookRepository) {
+class BookService(val repository: BookRepository) {
 
     fun findBook(id: Int): BookEntity {
         return try {

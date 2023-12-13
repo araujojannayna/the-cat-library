@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/books")
-class BookController(var service: BookService) {
+class BookController(val service: BookService) {
 
     @GetMapping("/{id}")
     fun find(@PathVariable id: Int): BookEntity = service.findBook(id)
